@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>kanto_vector-tile-map</title>
+    <script src="http://172.16.0.1/maplibre-gl.js"></script>
+    <link href="http://172.16.0.1/maplibre-gl.css" rel="stylesheet" />
+    <style>
+      html,
+      body,
+      #map {
+        width: 100vw;
+        height: 100vh;
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+    <script>
+      (async () => {
+        let map;
+        const res = await fetch("http://172.16.0.1/tiles.json");
+        const tilejson = await res.json();
+        const bounds = tilejson.bounds;
+        const center = tilejson.center
+          ? tilejson.center
+          : [(bounds[0] + bounds[2]) / 2, (bounds[1] + bounds[3]) / 2];
+        const zoom = (tilejson.minzoom + tilejson.maxzoom) / 2;
+        console.log(center, zoom);
+        map = new maplibregl.Map({
+          container: "map",
+          style: "http://172.16.0.1/style.json",
+          center: center,
+          zoom: 10,
+        });
+
+        map.on("load", function () {
+          map.loadImage(
+            "http://172.16.0.1/image/house.png",
+            function (error, image) {
+              if (error) throw error;
+              map.addImage("evacuation", image);
+              map.addSource("evacuationes", {
+                type: "geojson",
+                data: "http://172.16.0.1/data/evacuation_center_Tokyo.geojson",
+                cluster: true,
+                clusterMaxZoom: 14,
+                clusterRadius: 50,
+              });
+              map.addLayer({
+                id: "clusters",
+                type: "circle",
+                source: "evacuationes",
+                minzoom: 0,
+                maxzoom: 22,
+                filter: ["has", "point_count"],
+                paint: {
+                  "circle-color": [
+                    "step",
+                    ["get", "point_count"],
+                    "#51bbd6",
+                    30,
+                    "#f1f075",
+                    100,
+                    "#f28cb1",
+                  ],
+                  "circle-radius": [
+                    "step",
+                    ["get", "point_count"],
+                    20,
+                    30,
+                    30,
+                    100,
+                    40,
+                  ],
+                },
+              });
+              map.addLayer({
+                id: "cluster-count",
+                type: "symbol",
+                source: "evacuationes",
+                filter: ["has", "point_count"],
+                layout: {
+                  "text-field": "{point_count}",
+                  "text-font": ["Open Sans Regular"],
+                  "text-size": 12,
+                },
+              });
+              map.addLayer({
+                id: "unclustered-point",
+                type: "circle",
+                source: "evacuationes",
+                filter: ["!", ["has", "point_count"]],
+                paint: {
+                  "circle-color": "#ff0000",
+                  "circle-radius": 7,
+                  "circle-stroke-width": 4,
+                  "circle-stroke-color": "#fff",
+                },
+              });
+            }
+          );
+        });
+        map.addControl(new maplibregl.NavigationControl());
+        map.addControl(
+          new maplibregl.AttributionControl({
+            compact: false,
+            customAttribution:
+              "Style © <a href='http://openmaptiles.org/'>OpenMapTiles</a> | " +
+              "Data © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap contributors</a>",
+          })
+        );
+      })();
+    </script>
+  </body>
+</html>
