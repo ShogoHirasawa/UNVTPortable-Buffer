@@ -5,8 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>kanto_vector-tile-map</title>
-    <script src="http://172.16.0.1/maplibre-gl.js"></script>
-    <link href="http://172.16.0.1/maplibre-gl.css" rel="stylesheet" />
+    <script src="http://192.168.10.10/maplibre-gl.js"></script>
+    <link href="http://192.168.10.10/maplibre-gl.css" rel="stylesheet" />
     <style>
       html,
       body,
@@ -24,7 +24,7 @@
     <script>
       (async () => {
         let map;
-        const res = await fetch("http://172.16.0.1/tiles.json");
+        const res = await fetch("http://192.168.10.10/tiles.json");
         const tilejson = await res.json();
         const bounds = tilejson.bounds;
         const center = tilejson.center
@@ -34,20 +34,20 @@
         console.log(center, zoom);
         map = new maplibregl.Map({
           container: "map",
-          style: "http://172.16.0.1/style.json",
+          style: "http://192.168.10.10/style.json",
           center: center,
           zoom: 10,
         });
 
         map.on("load", function () {
           map.loadImage(
-            "http://172.16.0.1/image/house.png",
+            "http://192.168.10.10/image/house.png",
             function (error, image) {
               if (error) throw error;
               map.addImage("evacuation", image);
               map.addSource("evacuationes", {
                 type: "geojson",
-                data: "http://172.16.0.1/data/evacuation_center_Tokyo.geojson",
+                data: "http://192.168.10.10/data/evacuation_center_Tokyo.geojson",
                 cluster: true,
                 clusterMaxZoom: 14,
                 clusterRadius: 50,
