@@ -44,11 +44,11 @@
   "sources": {
     "openmaptiles": {
       "type": "vector",
-      "url": "http://172.16.0.1/tiles.json"
+      "url": "http://192.168.10.10/tiles.json"
     }
   },
-  "sprite": "http://172.16.0.1/osm-bright-gl-style/sprite",
-  "glyphs": "http://172.16.0.1/fonts/{fontstack}/{range}.pbf",
+  "sprite": "http://192.168.10.10/osm-bright-gl-style/sprite",
+  "glyphs": "http://192.168.10.10/fonts/{fontstack}/{range}.pbf",
   "layers": [
     {
       "id": "background",
