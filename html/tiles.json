@@ -178,5 +178,5 @@
       "maxzoom": 14
     }
   ],
-  "tiles": ["http://172.16.0.1/xyz/basemap/{z}/{x}/{y}.pbf"]
+  "tiles": ["http://192.168.10.10/xyz/basemap/{z}/{x}/{y}.pbf"]
 }
